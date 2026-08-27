@@ -1,14 +1,18 @@
-# DTSFormer
+# DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer
 
-> **Status:** Accepted by **Knowledge-Based Systems** and published in Volume 309 (2025), Article 112828. [[Paper]](https://doi.org/10.1016/j.knosys.2024.112828)
+[![Paper](https://img.shields.io/badge/Paper-10.1016%2Fj.knosys.2024.112828-blue)](https://doi.org/10.1016/j.knosys.2024.112828)
+[![Journal](https://img.shields.io/badge/Knowledge--Based%20Systems-Volume%20309-green)](https://doi.org/10.1016/j.knosys.2024.112828)
+[![Framework](https://img.shields.io/badge/PyTorch-Official%20Implementation-ee4c2c)](https://pytorch.org/)
 
-This repository provides the official PyTorch implementation of:
+> **Official PyTorch implementation** of the Knowledge-Based Systems paper **"DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer for Enhanced Long-Term Time Series Forecasting"**, Volume 309 (2025), Article 112828.
 
-**DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer for Enhanced Long-Term Time Series Forecasting**
+This repository contains the authors' official source code for DTSFormer, a decoupled temporal-spatial diffusion Transformer for multivariate long-term time series forecasting.
+
+**Keywords:** DTSFormer, time series forecasting, long-term forecasting, multivariate time series, temporal-spatial Transformer, graph diffusion, seasonal-trend decomposition, Knowledge-Based Systems.
 
 ## 📰 News
 
-- **2024-12-21:** The paper became available online in *Knowledge-Based Systems*.
+- **2024-12-21:** The paper became available online in *Knowledge-Based Systems*. [[Paper]](https://doi.org/10.1016/j.knosys.2024.112828)
 - **2024-11-29:** The paper was accepted by *Knowledge-Based Systems*.
 
 ## 🌟 Overview
@@ -38,15 +42,15 @@ Download the public forecasting datasets from the dataset collection provided by
 
 ```text
 data/
-├── ETTh1.csv
-├── ETTh2.csv
-├── ETTm1.csv
-├── ETTm2.csv
-├── electricity.csv
-├── traffic.csv
-├── weather.csv
-├── solar_AL.txt
-└── exchange_rate.csv
+|-- ETTh1.csv
+|-- ETTh2.csv
+|-- ETTm1.csv
+|-- ETTm2.csv
+|-- electricity.csv
+|-- traffic.csv
+|-- weather.csv
+|-- solar_AL.txt
+`-- exchange_rate.csv
 ```
 
 CSV files must contain a `date` column. Solar-Energy uses the standard comma-separated text format. Dataset paths can also be specified with `--root_path` and `--data_path`.
