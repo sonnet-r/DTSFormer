@@ -1,44 +1,35 @@
-# DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer
+# DTSFormer
 
-[![Paper](https://img.shields.io/badge/Paper-10.1016%2Fj.knosys.2024.112828-blue)](https://doi.org/10.1016/j.knosys.2024.112828)
-[![Journal](https://img.shields.io/badge/Knowledge--Based%20Systems-Volume%20309-green)](https://doi.org/10.1016/j.knosys.2024.112828)
-[![Framework](https://img.shields.io/badge/PyTorch-Official%20Implementation-ee4c2c)](https://pytorch.org/)
+> 📄 **Paper:** **DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer for Enhanced Long-Term Time Series Forecasting**
+>
+> 🏛️ **Status:** Published in *Knowledge-Based Systems*, Volume 309 (2025), Article 112828. [[Paper]](https://doi.org/10.1016/j.knosys.2024.112828)
 
-> **Official PyTorch implementation** of the Knowledge-Based Systems paper **"DTSFormer: Decoupled Temporal-Spatial Diffusion Transformer for Enhanced Long-Term Time Series Forecasting"**, Volume 309 (2025), Article 112828.
+Official PyTorch implementation of DTSFormer for multivariate long-term time
+series forecasting.
 
-This repository contains the authors' official source code for DTSFormer, a decoupled temporal-spatial diffusion Transformer for multivariate long-term time series forecasting.
+## ✨ Overview
 
-**Keywords:** DTSFormer, time series forecasting, long-term forecasting, multivariate time series, temporal-spatial Transformer, graph diffusion, seasonal-trend decomposition, Knowledge-Based Systems.
+DTSFormer explores decoupled temporal-spatial diffusion modeling after
+seasonal-trend decomposition. This repository provides the complete model,
+dataset loaders, and reproducible training and evaluation entry points.
 
-## 📰 News
+## 🛠️ Requirements
 
-- **2024-12-21:** The paper became available online in *Knowledge-Based Systems*. [[Paper]](https://doi.org/10.1016/j.knosys.2024.112828)
-- **2024-11-29:** The paper was accepted by *Knowledge-Based Systems*.
-
-## 🌟 Overview
-
-DTSFormer separates temporal and spatial dependencies after seasonal-trend decomposition. Its main components are:
-
-- **Temporal Information Fusion (TIF):** integrates local seasonal and trend information through learnable memory attention.
-- **Adaptive Mix-hop Diffusion:** learns sparse seasonal and trend graphs and propagates information over multiple hops.
-- **Cross-diffusion Attention:** iteratively exchanges information between the seasonal and trend spatial representations.
-- **Decoupled Forecasting:** combines temporal and spatial forecasts to produce the final prediction.
-
-The released model follows a single complete inference path. Every model component in `models/DTSFormer.py` contributes to the final forecast.
-
-## 🛠 Prerequisites
-
-The code is implemented with Python 3 and PyTorch. Install the dependencies with:
+The code is implemented with Python 3 and PyTorch. Install the dependencies
+with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 📊 Prepare Datasets
+## 📊 Datasets
 
-The data loader supports ETTh1, ETTh2, ETTm1, ETTm2, Electricity, Traffic, Weather, Solar-Energy, Exchange-Rate, and custom multivariate datasets.
+The data loader supports ETTh1, ETTh2, ETTm1, ETTm2, Electricity, Traffic,
+Weather, Solar-Energy, Exchange-Rate, and custom multivariate datasets.
 
-Download the public forecasting datasets from the dataset collection provided by [Time-Series-Library](https://github.com/thuml/Time-Series-Library), then place them under `./data/`:
+Download the public datasets from
+[Time-Series-Library](https://github.com/thuml/Time-Series-Library) and place
+them under `./data/`:
 
 ```text
 data/
@@ -53,11 +44,14 @@ data/
 `-- exchange_rate.csv
 ```
 
-CSV files must contain a `date` column. Solar-Energy uses the standard comma-separated text format. Dataset paths can also be specified with `--root_path` and `--data_path`.
+CSV files must contain a `date` column. Solar-Energy uses the standard
+comma-separated text format. Paths can be changed with `--root_path` and
+`--data_path`.
 
-## 💻 Training
+## 🚀 Training
 
-Train and evaluate DTSFormer directly through `run.py`. For example, ETTh1 with an input length of 96 and a prediction length of 96 can be run as follows:
+Train DTSFormer through `run.py`. The following example uses ETTh1 with a
+`96 -> 96` forecasting setting:
 
 ```bash
 python run.py \
@@ -70,23 +64,10 @@ python run.py \
   --pred_len 96
 ```
 
-To use another supported dataset, change `--data`. Dataset-specific channel counts, batch sizes, learning rates, graph neighborhoods, and diffusion depths are configured automatically. Important settings can still be overridden from the command line:
-
-```bash
-python run.py \
-  --is_training 1 \
-  --model_id Traffic_96_96 \
-  --data Traffic \
-  --pred_len 96 \
-  --d_model 64 \
-  --d_ff 128 \
-  --graph_top_k 20 \
-  --gcn_depth 3 \
-  --cross_diffusion_iters 3 \
-  --use_amp
-```
-
-Checkpoints are selected only by validation loss. After training and early stopping, the selected checkpoint is evaluated once on the test set. Metrics are written to `outputs/`.
+Dataset-specific channel counts, batch sizes, learning rates, graph
+neighborhoods, and diffusion depths are configured automatically and can be
+overridden from the command line. Checkpoints are selected only by validation
+loss; the selected checkpoint is evaluated once on the test set.
 
 ## 📈 Evaluation
 
@@ -121,13 +102,15 @@ If this work is helpful to your research, please consider citing:
 }
 ```
 
-## 🙏 Acknowledgement
+## 🙏 Acknowledgements
 
-We appreciate the following repositories for their valuable code and dataset resources:
+We appreciate the following repositories for their valuable code and dataset
+resources:
 
 - [Time-Series-Library](https://github.com/thuml/Time-Series-Library)
 - [MTGNN](https://github.com/nnzhan/MTGNN)
 
-## 📩 Contact
+## 📬 Contact
 
 For questions about the code, please open an issue in this repository.
+
