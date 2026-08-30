@@ -10,14 +10,6 @@ Official PyTorch implementation of DTSFormer for multivariate long-term time ser
 
 DTSFormer explores decoupled temporal-spatial diffusion modeling after seasonal-trend decomposition. This repository provides the complete model, dataset loaders, and reproducible training and evaluation entry points.
 
-## 💡 Future Research
-
-The following directions are natural extensions of DTSFormer and are not included in the current official implementation:
-
-- **Timestamp-conditioned dynamic graph learning.** Use timestamp and calendar covariates as exogenous conditioning signals to construct sample-adaptive graphs, allowing cross-variable dependencies to evolve across recurring temporal regimes.
-- **Phase-domain temporal modeling.** Incorporate cycle-to-phase tokenization and cross-phase routing inspired by [PhaseFormer](https://github.com/neumyor/PhaseFormer), so periodic alignment and long-range dependencies can be modeled beyond fixed temporal patches.
-- **Patch-specific graph modeling with efficient seasonal-trend fusion.** Adapt the fine-grained patch-specific graph filtration of [TimeFilter](https://github.com/TROUBADOUR000/TimeFilter) to build local relational structures for seasonal and trend representations, followed by lightweight cross-branch interaction for more efficient fusion.
-
 ## 🛠️ Requirements
 
 The code is implemented with Python 3 and PyTorch. Install the dependencies with:
