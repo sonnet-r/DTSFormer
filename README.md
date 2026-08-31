@@ -10,6 +10,14 @@ Official PyTorch implementation of DTSFormer for multivariate long-term time ser
 
 DTSFormer explores decoupled temporal-spatial diffusion modeling after seasonal-trend decomposition. This repository provides the complete model, dataset loaders, and reproducible training and evaluation entry points.
 
+## 🧩 Framework
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c046ef4f-9f01-4b55-86e3-75cb0c96453e" alt="Overall architecture of DTSFormer" width="950">
+</p>
+
+<p align="center"><em>Overall architecture of DTSFormer.</em></p>
+
 ## 🛠️ Requirements
 
 The code is implemented with Python 3 and PyTorch. Install the dependencies with:
