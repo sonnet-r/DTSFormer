@@ -52,8 +52,6 @@ def build_parser():
     parser.add_argument("--dropout", type=float, default=0.1)
 
     parser.add_argument("--tif_window", type=int, default=4)
-    parser.add_argument("--tif_correction_scale", type=float, default=0.05)
-    parser.add_argument("--tif_scale_floor", type=float, default=0.0)
     parser.add_argument("--node_dim", type=int, default=16)
     parser.add_argument("--graph_top_k", type=int, default=None)
     parser.add_argument("--graph_alpha", type=float, default=3.0)
@@ -114,8 +112,6 @@ def prepare_args(args):
         raise ValueError("--label_len cannot exceed --seq_len")
     if args.tif_window < 0:
         raise ValueError("--tif_window must be non-negative")
-    if args.tif_correction_scale < 0.0 or args.tif_scale_floor < 0.0:
-        raise ValueError("TIF correction scales must be non-negative")
     if args.graph_top_k < 1:
         raise ValueError("--graph_top_k must be positive")
     if args.graph_temperature <= 0.0:

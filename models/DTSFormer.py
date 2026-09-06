@@ -60,8 +60,6 @@ class TemporalInformationFusion(nn.Module):
         d_model: int,
         window_size: int,
         dropout: float,
-        correction_scale: float,
-        correction_floor: float,
     ):
         super().__init__()
         if window_size < 0:
@@ -75,10 +73,6 @@ class TemporalInformationFusion(nn.Module):
         )
         self.value = nn.Linear(d_model, d_model)
         self.output_projection = nn.Linear(d_model * 2, d_model)
-        self.correction_floor = correction_floor
-        initial_scale = max(correction_scale - correction_floor, 1e-6)
-        raw_scale = torch.log(torch.expm1(torch.tensor(initial_scale)))
-        self.correction_scale = nn.Parameter(raw_scale)
         self.dropout = nn.Dropout(dropout)
         self.norm1 = nn.LayerNorm(d_model)
         self.norm2 = nn.LayerNorm(d_model)
@@ -106,12 +100,12 @@ class TemporalInformationFusion(nn.Module):
         seasonal_query = seasonal.unsqueeze(2).expand(-1, -1, window_width, -1)
         memory_input = torch.cat((trend_windows, seasonal_query), dim=-1)
         scores = self.memory_projection(memory_input).squeeze(-1)
-        weights = self.dropout(torch.softmax(scores, dim=-1))
+        weights = torch.softmax(scores, dim=-1)
         values = self.value(trend_windows)
         context = (weights.unsqueeze(-1) * values).sum(dim=2)
-        correction = self.output_projection(torch.cat((seasonal, context), dim=-1))
-        correction_scale = self.correction_floor + F.softplus(self.correction_scale)
-        fused = self.norm1(seasonal + trend + correction_scale * correction)
+        # 输出只来自 Memory(T, S)，不再叠加季节项或趋势项旁路。
+        memory_fused = self.output_projection(torch.cat((seasonal, context), dim=-1))
+        fused = self.norm1(memory_fused)
         return self.norm2(fused + self.dropout(self.feed_forward(fused)))
 
 
@@ -305,8 +299,6 @@ class Model(nn.Module):
         spatial_d_ff = getattr(configs, "spatial_d_ff", None) or d_ff
         moving_avg = getattr(configs, "moving_avg", 25)
         tif_window = getattr(configs, "tif_window", 4)
-        tif_correction_scale = getattr(configs, "tif_correction_scale", 0.1)
-        tif_scale_floor = getattr(configs, "tif_scale_floor", 0.0)
         graph_top_k = getattr(configs, "graph_top_k", getattr(configs, "subgraph_size", 3))
         graph_alpha = getattr(configs, "graph_alpha", getattr(configs, "tanhalpha", 3.0))
         graph_temperature = getattr(configs, "graph_temperature", 1.0)
@@ -334,8 +326,6 @@ class Model(nn.Module):
             self.temporal_d_model,
             tif_window,
             dropout,
-            tif_correction_scale,
-            tif_scale_floor,
         )
         self.temporal_channel_projection = nn.Linear(
             self.temporal_d_model, self.enc_in
