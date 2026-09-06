@@ -277,8 +277,8 @@ class CrossDiffusionAttention(nn.Module):
 
         fused = (k_trend + k_seasonal).transpose(1, 2).contiguous()
         fused = fused.view(trend.size(0), trend.size(1), -1)
-        residual = self.norm1(trend + seasonal + self.output_projection(fused))
-        return self.norm2(residual + self.dropout(self.feed_forward(residual)))
+        fused = self.norm1(self.output_projection(fused))
+        return self.norm2(fused + self.dropout(self.feed_forward(fused)))
 
 
 class Model(nn.Module):
