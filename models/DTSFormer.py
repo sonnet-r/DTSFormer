@@ -4,8 +4,6 @@ import torch.nn.functional as F
 
 
 class MovingAverage(nn.Module):
-    """使用端点填充的移动平均提取趋势项。"""
-
     def __init__(self, kernel_size: int):
         super().__init__()
         if kernel_size <= 0 or kernel_size % 2 == 0:
@@ -22,8 +20,6 @@ class MovingAverage(nn.Module):
 
 
 class SeriesDecomposition(nn.Module):
-    """将输入分解为季节项和趋势项。"""
-
     def __init__(self, kernel_size: int):
         super().__init__()
         self.moving_average = MovingAverage(kernel_size)
@@ -53,8 +49,6 @@ class ResidualMLP(nn.Module):
 
 
 class TemporalInformationFusion(nn.Module):
-    """论文中的局部季节-趋势信息融合注意力（TIF）。"""
-
     def __init__(
         self,
         d_model: int,
@@ -103,15 +97,13 @@ class TemporalInformationFusion(nn.Module):
         weights = torch.softmax(scores, dim=-1)
         values = self.value(trend_windows)
         context = (weights.unsqueeze(-1) * values).sum(dim=2)
-        # 输出只来自 Memory(T, S)，不再叠加季节项或趋势项旁路。
+        # The fused representation is produced exclusively by Memory(T, S).
         memory_fused = self.output_projection(torch.cat((seasonal, context), dim=-1))
         fused = self.norm1(memory_fused)
         return self.norm2(fused + self.dropout(self.feed_forward(fused)))
 
 
 class AdaptiveGraph(nn.Module):
-    """为趋势项或季节项学习独立的稀疏有向图。"""
-
     def __init__(
         self,
         num_nodes: int,
@@ -154,8 +146,6 @@ class AdaptiveGraph(nn.Module):
 
 
 class MixHopDiffusion(nn.Module):
-    """带特征注意力和保真项的 mix-hop diffusion。"""
-
     def __init__(
         self,
         d_model: int,
@@ -178,7 +168,6 @@ class MixHopDiffusion(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def _row_normalize(self, adjacency: torch.Tensor) -> torch.Tensor:
-        """将有向邻接矩阵转换为行随机游走矩阵。"""
         identity = torch.eye(adjacency.size(0), device=adjacency.device, dtype=adjacency.dtype)
         neighbors = adjacency / adjacency.sum(dim=1, keepdim=True).clamp_min(1e-6)
         return self.self_loop_weight * identity + (
@@ -190,13 +179,12 @@ class MixHopDiffusion(nn.Module):
         transformed: torch.Tensor,
         graph: torch.Tensor,
     ) -> torch.Tensor:
-        """实现论文中的特征权重扩散、保真项和归一化。"""
         coefficients = torch.softmax(transformed, dim=-1)
         payoff = torch.einsum("ij,bjd->bid", graph, coefficients)
         payoff = payoff + self.epsilon * coefficients
         normalized = payoff / payoff.sum(dim=-1, keepdim=True).clamp_min(1e-6)
 
-        # 概率权重的均值为 1 / d_model；尺度补偿使门控初始幅值接近恒等映射。
+        # Scale normalized feature weights to preserve the transformed magnitude.
         return normalized * transformed.size(-1)
 
     def forward(self, x: torch.Tensor, adjacency: torch.Tensor) -> torch.Tensor:
@@ -216,8 +204,6 @@ class MixHopDiffusion(nn.Module):
 
 
 class CrossDiffusionAttention(nn.Module):
-    """基于 E-step/M-step 迭代的季节-趋势图信息融合。"""
-
     def __init__(
         self,
         d_model: int,
@@ -282,8 +268,6 @@ class CrossDiffusionAttention(nn.Module):
 
 
 class Model(nn.Module):
-    """DTSFormer：解耦时序融合与空间图扩散的长期预测模型。"""
-
     def __init__(self, configs):
         super().__init__()
         self.seq_len = configs.seq_len
@@ -381,7 +365,6 @@ class Model(nn.Module):
         self.output_projection = nn.Linear(self.enc_in * 2, self.enc_in)
 
     def _normalize(self, x: torch.Tensor):
-        """按样本和变量执行可逆实例归一化。"""
         mean = x.mean(dim=1, keepdim=True).detach()
         variance = x.var(dim=1, keepdim=True, unbiased=False)
         std = torch.sqrt(variance + 1e-5).detach()

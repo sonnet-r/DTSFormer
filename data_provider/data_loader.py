@@ -38,7 +38,7 @@ def _calendar_features(dates: pd.Series, cycle_length: int) -> np.ndarray:
         cycle_index = (dates.dt.dayofyear.to_numpy() - 1) % cycle_length
         minute_slot = np.zeros(len(dates), dtype=np.int64)
 
-    # 最后一列保存统一的周期位置，供趋势分支构造周期查询。
+    # Store a unified timestamp index in the last column.
     return np.column_stack(
         (
             dates.dt.month.to_numpy(),
@@ -112,7 +112,7 @@ class ForecastDataset(Dataset):
                 raise ValueError(f"Target column '{self.target}' is missing")
             feature_columns = [self.target]
 
-        # 归一化统计量只由训练集计算，避免验证集和测试集信息泄漏。
+        # Fit normalization statistics on the training split only.
         starts, ends = self._split_borders(len(frame))
         split_index = {"train": 0, "val": 1, "test": 2}[self.flag]
         start, end = starts[split_index], ends[split_index]

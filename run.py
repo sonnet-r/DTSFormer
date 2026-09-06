@@ -9,7 +9,8 @@ import torch
 from exp.exp_long_term_forecasting import ExpLongTermForecast
 
 
-# 数据集默认值：文件名、采样周期、变量数、批大小、学习率和扩散深度。
+# Dataset defaults: file, timestamp vocabulary, channels, batch size, learning rate,
+# diffusion depth, and graph neighborhood size.
 DATA_DEFAULTS = {
     "ETTh1": ("ETTh1.csv", 24, 7, 32, 0.008, 3, 3),
     "ETTh2": ("ETTh2.csv", 24, 7, 32, 0.008, 3, 3),
